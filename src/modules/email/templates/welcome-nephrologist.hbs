@@ -2,7 +2,7 @@
   <head>
     <meta charset='UTF-8' />
     <meta name='viewport' content='width=device-width, initial-scale=1.0' />
-    <title>Your CuraKidney OTP Code</title>
+    <title>Welcome to CuraKidney</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -28,7 +28,6 @@
       }
       .content {
         padding: 30px;
-        text-align: center;
       }
       .footer {
         background-color: #f4f4f4;
@@ -41,15 +40,15 @@
         margin-top: 0;
         font-size: 24px;
       }
-      .otp-code {
-        font-size: 32px;
-        letter-spacing: 5px;
-        background-color: #f4f4f4;
-        padding: 15px 25px;
-        border-radius: 4px;
-        margin: 25px 0;
-        font-weight: bold;
+      .button {
         display: inline-block;
+        background-color: #d1243b;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 4px;
+        margin: 20px 0;
+        font-weight: bold;
       }
       .highlight {
         color: #d1243b;
@@ -59,21 +58,12 @@
         border-top: 1px solid #eeeeee;
         margin: 25px 0;
       }
-      .expiry-note {
-        font-size: 14px;
-        color: #666;
-        margin-bottom: 25px;
-      }
       @media only screen and (max-width: 600px) {
         .container {
           width: 100%;
         }
         .content {
           padding: 20px;
-        }
-        .otp-code {
-          font-size: 28px;
-          letter-spacing: 3px;
         }
       }
     </style>
@@ -88,19 +78,35 @@
         />
       </div>
       <div class='content'>
-        <h1>Your One-Time Password</h1>
+        <h1>Welcome to CuraKidney</h1>
 
-        <p style='font-size: 16px; color: #666;'>Please use the following OTP to
-          complete your verification:</p>
+        <p style='font-size: 14px; color: #666;'>Dear [Doctor Fullname],</p>
 
-        <div class='otp-code'>456789</div>
+        <p style='font-size: 14px; color: #666;'>Your account creation has been
+          initiated by one of our facility staff.</p>
 
-        <p class='expiry-note'>This code will expire in 10 minutes.</p>
+        <p style='font-size: 14px; color: #666;'>Provided below are the steps to
+          complete your account creation</p>
+
+        <ul style='font-size: 14px; color: #666;'>
+          <li>Click the action button below</li>
+          <li>You will be redirected to our CuraKidney website</li>
+          <li>Provide the requested details</li>
+          <li>Submit and proceed to verification</li>
+          <li>Once success, you will be then able to login to the platform</li>
+        </ul>
+
+        <a
+          href='https://curakidneydashboardv2.up.railway.app/auth/create-account/verify-details?account_type=nephrologist'
+          class='button'
+          style='font-size: 14px;'
+        >Verify Your Account Details</a>
 
         <div class='divider'></div>
 
-        <p style='color: #777; font-size: 13px;'>If you didn't request this
-          code, please ignore this email or contact us at
+        <p style='color: #777; font-size: 13px;'>If you have any questions or
+          need assistance, our support team is here to help. Simply reply to
+          this email or contact us at
           <a
             href='mailto:support@curakidney.com'
             style='color: #2AAEA0;'
@@ -108,7 +114,7 @@
 
         <div class='divider'></div>
 
-        <p>Thank you,</p>
+        <p>Wishing you the best in health,</p>
         <p><strong>The CuraKidney Team</strong></p>
       </div>
       <div class='footer'>

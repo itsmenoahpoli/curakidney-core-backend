@@ -52,6 +52,12 @@ async function main() {
         userRoleId: adminRole.id,
       },
       {
+        email: 'patrickpolicarpio08@gmail.com.com',
+        password: hashedPassword,
+        name: 'Admin User',
+        userRoleId: adminRole.id,
+      },
+      {
         email: 'doctor@example.com',
         password: hashedPassword,
         name: 'Doctor User',
