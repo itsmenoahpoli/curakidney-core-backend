@@ -1,11 +1,26 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { UserRolesService } from './user-roles.service';
 import { CreateUserRoleDto } from './dto/create-user-role.dto';
 import { UpdateUserRoleDto } from './dto/update-user-role.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('user-roles')
+@ApiBearerAuth('bearer')
 @Controller('user-roles')
 @UseGuards(JwtAuthGuard)
 export class UserRolesController {
@@ -32,7 +47,10 @@ export class UserRolesController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update a user role' })
-  update(@Param('id') id: string, @Body() updateUserRoleDto: UpdateUserRoleDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserRoleDto: UpdateUserRoleDto,
+  ) {
     return this.userRolesService.update(+id, updateUserRoleDto);
   }
 

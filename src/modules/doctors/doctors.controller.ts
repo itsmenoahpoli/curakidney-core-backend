@@ -1,10 +1,16 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DoctorsService } from './doctors.service';
 import { Doctor } from './entities/doctor.entity';
 
 @ApiTags('doctors')
+@ApiBearerAuth('bearer')
 @Controller('doctors')
 @UseGuards(JwtAuthGuard)
 export class DoctorsController {

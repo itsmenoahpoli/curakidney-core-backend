@@ -21,11 +21,9 @@ async function bootstrap() {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth',
+      'bearer', // This is the key we'll use in @ApiBearerAuth()
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
