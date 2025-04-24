@@ -6,6 +6,9 @@ import { AuthModule } from '@/modules/auth/auth.module';
 import { UsersModule } from '@/modules/users/users.module';
 import { UserRolesModule } from '@/modules/user-roles/user-roles.module';
 import { PrismaModule } from '@/prisma/prisma.module';
+import { PatientsModule } from '@/modules/patients/patients.module';
+import { PatientTreatmentsModule } from '@/modules/patient-treatments/patient-treatments.module';
+import { DoctorsModule } from '@/modules/doctors/doctors.module';
 
 @Module({
   imports: [
@@ -17,6 +20,9 @@ import { PrismaModule } from '@/prisma/prisma.module';
     AuthModule,
     UsersModule,
     UserRolesModule,
+    PatientsModule,
+    PatientTreatmentsModule,
+    DoctorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
