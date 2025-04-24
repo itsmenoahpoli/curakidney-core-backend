@@ -46,14 +46,27 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Fetch user with role information
+    const userWithRole = await this.prisma.user.findUnique({
+      where: { id: user.id },
+      include: {
+        userRole: true,
+      },
+    });
+
     const payload = { sub: user.id, email: user.email };
     const tokens = this.generateTokens(payload);
 
     return {
       ...tokens,
       user: {
-        id: user.id,
-        email: user.email,
+        id: userWithRole.id,
+        email: userWithRole.email,
+        name: userWithRole.name,
+        role: {
+          id: userWithRole.userRole.id,
+          name: userWithRole.userRole.name,
+        },
       },
     };
   }

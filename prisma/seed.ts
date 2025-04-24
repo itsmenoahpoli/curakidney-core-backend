@@ -46,7 +46,7 @@ async function main() {
   await prisma.user.createMany({
     data: [
       {
-        email: 'admin@example.com',
+        email: 'admin@curakidney.com',
         password: hashedPassword,
         name: 'Admin User',
         userRoleId: adminRole.id,
@@ -54,23 +54,23 @@ async function main() {
       {
         email: 'patrickpolicarpio08@gmail.com.com',
         password: hashedPassword,
-        name: 'Admin User',
+        name: 'Patrick Policarpio',
         userRoleId: adminRole.id,
       },
       {
-        email: 'doctor@example.com',
+        email: 'doctor@curakidney.com',
         password: hashedPassword,
         name: 'Doctor User',
         userRoleId: nephrologistRole.id,
       },
       {
-        email: 'staff@example.com',
+        email: 'staff@curakidney.com',
         password: hashedPassword,
-        name: 'Staff User',
+        name: 'Staff Nurse',
         userRoleId: staffRole.id,
       },
       {
-        email: 'patient@example.com',
+        email: 'patient@curakidney.com',
         password: hashedPassword,
         name: 'Patient User',
         userRoleId: patientRole.id,
