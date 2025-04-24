@@ -1,0 +1,150 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Welcome to CuraKidney</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333333;
+        margin: 0;
+        padding: 0;
+        background-color: #f9f9f9;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+      }
+      .header {
+        background-color: #fff;
+        padding: 20px;
+        text-align: center;
+      }
+      .logo {
+        max-width: 250px;
+        height: auto;
+      }
+      .content {
+        padding: 30px;
+      }
+      .footer {
+        background-color: #f4f4f4;
+        padding: 20px;
+        text-align: center;
+        font-size: 12px;
+        color: #666666;
+      }
+      h1 {
+        margin-top: 0;
+        font-size: 24px;
+        color: #d1243b;
+      }
+      .button {
+        display: inline-block;
+        background-color: #d1243b;
+        color: #ffffff !important;
+        text-decoration: none;
+        padding: 12px 25px;
+        border-radius: 4px;
+        margin: 20px 0;
+        font-weight: bold;
+      }
+      .highlight {
+        color: #d1243b;
+        font-weight: bold;
+      }
+      .success-icon {
+        text-align: center;
+        font-size: 48px;
+        color: #2aaea0;
+        margin: 10px 0;
+      }
+      .divider {
+        border-top: 1px solid #eeeeee;
+        margin: 25px 0;
+      }
+      @media only screen and (max-width: 600px) {
+        .container {
+          width: 100%;
+        }
+        .content {
+          padding: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class='container'>
+      <div class='header'>
+        <img
+          src='https://curakidney-assets-production.up.railway.app/images/curakidney-logo.png'
+          alt='CuraKidney Logo'
+          class='logo'
+        />
+      </div>
+      <div class='content'>
+        <div class='success-icon'>✓</div>
+        <h1>Welcome to CuraKidney, Dr. Policarpio!</h1>
+
+        <p style='font-size: 16px; color: #333;'><span
+            class='highlight'
+          >Congratulations!</span>
+          Your Nephrologist account has been successfully created.</p>
+
+        <p style='font-size: 15px; color: #444;'>We're thrilled to welcome you
+          to the CuraKidney platform, where you can manage patient care, access
+          clinical data, and collaborate with your healthcare team seamlessly.</p>
+
+        <p style='font-size: 15px; color: #444;'><strong>Your account is now
+            ready to use.</strong>
+          Here's how to get started:</p>
+
+        <ul style='font-size: 14px; color: #444;'>
+          <li>Log in using your email address and the password you created</li>
+          <li>Complete your profile information to personalize your experience</li>
+          <li>Review available patient records and upcoming appointments</li>
+          <li>Explore our clinical tools and resources designed for
+            nephrologists</li>
+        </ul>
+
+        <a
+          href='{{loginUri}}'
+          class='button'
+          style='font-size: 14px; display: inline-block; background-color: #d1243b; color: #ffffff !important; text-decoration: none; padding: 12px 25px; border-radius: 4px; margin: 20px 0; font-weight: bold;'
+        >
+          Log In Now
+        </a>
+
+        <div class='divider'></div>
+
+        <p style='color: #444; font-size: 14px;'>Our team has developed
+          CuraKidney with the specific needs of nephrology specialists in mind.
+          We're confident that our platform will enhance your practice and
+          improve patient outcomes.</p>
+
+        <p style='color: #777; font-size: 13px;'>If you have any questions or
+          need assistance, our support team is here to help. Contact us at
+          <a
+            href='mailto:support@curakidney.com'
+            style='color: #2AAEA0;'
+          >support@curakidney.com</a>
+          or call our dedicated provider line at (555) 123-4567.</p>
+
+        <div class='divider'></div>
+
+        <p>We look forward to supporting your practice,</p>
+        <p><strong>The CuraKidney Team</strong></p>
+      </div>
+      <div class='footer'>
+        <p>© 2025 CuraKidney. All rights reserved.</p>
+        <p>
+          <a href='#' style='color: #666666;'>Privacy Policy</a>
+          |
+          <a href='#' style='color: #666666;'>Terms of Service</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

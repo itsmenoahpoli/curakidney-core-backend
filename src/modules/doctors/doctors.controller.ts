@@ -24,7 +24,7 @@ export class DoctorsController {
     type: Doctor,
     isArray: true,
   })
-  findAll(): Doctor[] {
+  async findAll(): Promise<Doctor[]> {
     return this.doctorsService.findAll();
   }
 
@@ -35,7 +35,7 @@ export class DoctorsController {
     description: 'Return a doctor by id',
     type: Doctor,
   })
-  findOne(@Param('id') id: string): Doctor {
+  async findOne(@Param('id') id: string): Promise<Doctor> {
     return this.doctorsService.findOne(+id);
   }
 }

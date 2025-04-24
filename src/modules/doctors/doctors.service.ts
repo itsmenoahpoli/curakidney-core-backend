@@ -1,14 +1,40 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { doctors, Doctor } from '@/mock-data/doctors.mock';
+import { PrismaService } from '@/prisma/prisma.service';
+import { Doctor } from './entities/doctor.entity';
 
 @Injectable()
 export class DoctorsService {
-  findAll(): Doctor[] {
+  constructor(private prisma: PrismaService) {}
+
+  async findAll(): Promise<Doctor[]> {
+    const doctors = await this.prisma.user.findMany({
+      where: {
+        userRoleId: 2, // nephrologist role ID
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        // Add other fields you want to expose
+      },
+    });
+
     return doctors;
   }
 
-  findOne(id: number): Doctor {
-    const doctor = doctors.find((d) => d.id === id);
+  async findOne(id: number): Promise<Doctor> {
+    const doctor = await this.prisma.user.findFirst({
+      where: {
+        id: id,
+        userRoleId: 2, // nephrologist role ID
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        // Add other fields you want to expose
+      },
+    });
 
     if (!doctor) {
       throw new NotFoundException('Doctor not found');
