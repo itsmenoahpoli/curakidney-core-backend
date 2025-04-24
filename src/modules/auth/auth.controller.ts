@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -37,5 +38,25 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
   refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshTokens(refreshTokenDto.refresh_token);
+  }
+
+  @Post('otp/request')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request OTP code' })
+  @ApiBody({ type: RequestOtpCodeDto })
+  @ApiResponse({ status: 200, description: 'Code sent successfully' })
+  @ApiResponse({ status: 401, description: 'Invalid email' })
+  requestOtpCode(@Body() dto: RequestOtpCodeDto) {
+    return this.authService.requestOtpCode(dto);
+  }
+
+  @Post('otp/verify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify OTP code' })
+  @ApiBody({ type: VerifyOtpCodeDto })
+  @ApiResponse({ status: 200, description: 'Code verified successfully' })
+  @ApiResponse({ status: 401, description: 'Invalid code' })
+  verifyOtpCode(@Body() dto: VerifyOtpCodeDto) {
+    return this.authService.verifyOtpCode(dto);
   }
 }

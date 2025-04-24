@@ -1,8 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@/modules/users/users.service';
+import { EmailService } from '@/modules/email/email.service';
+import { PrismaService } from '@/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
@@ -12,6 +15,8 @@ export class AuthService {
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
+    private readonly emailService: EmailService,
+    private readonly prisma: PrismaService,
   ) {}
 
   private generateTokens(payload: { sub: number; email: string }) {
@@ -91,5 +96,61 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }
+  }
+
+  private generateOtpCode(): string {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+  }
+
+  async requestOtpCode(dto: RequestOtpCodeDto) {
+    const user = await this.usersService.findByEmail(dto.email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid email');
+    }
+
+    const code = this.generateOtpCode();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    await this.prisma.otpCode.create({
+      data: {
+        code,
+        userId: user.id,
+        expiresAt,
+      },
+    });
+
+    await this.emailService.sendOtpCode(user.email, code);
+
+    return { message: 'Verification code sent to your email' };
+  }
+
+  async verifyOtpCode(dto: VerifyOtpCodeDto) {
+    const user = await this.usersService.findByEmail(dto.email);
+    if (!user) {
+      throw new UnauthorizedException('Invalid email');
+    }
+
+    const otpCode = await this.prisma.otpCode.findFirst({
+      where: {
+        userId: user.id,
+        code: dto.code,
+        expiresAt: {
+          gt: new Date(),
+        },
+        used: false,
+      },
+    });
+
+    if (!otpCode) {
+      throw new UnauthorizedException('Invalid or expired code');
+    }
+
+    await this.prisma.otpCode.update({
+      where: { id: otpCode.id },
+      data: { used: true },
+    });
+
+    const payload = { sub: user.id, email: user.email };
+    return this.generateTokens(payload);
   }
 }

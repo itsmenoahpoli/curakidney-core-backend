@@ -23,12 +23,23 @@ model UserRole {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
-  email      String   @unique
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
   password   String
   name       String
-  userRole   UserRole @relation(fields: [userRoleId], references: [id])
+  userRole   UserRole  @relation(fields: [userRoleId], references: [id])
   userRoleId Int
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  otpCodes   OtpCode[]
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+}
+
+model OtpCode {
+  id        Int      @id @default(autoincrement())
+  code      String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 }
