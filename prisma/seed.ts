@@ -52,7 +52,7 @@ async function main() {
         userRoleId: adminRole.id,
       },
       {
-        email: 'patrickpolicarpio08@gmail.com.com',
+        email: 'patrickpolicarpio08@gmail.com',
         password: hashedPassword,
         name: 'Patrick Policarpio',
         userRoleId: adminRole.id,

@@ -70,4 +70,29 @@ export class EmailService {
       throw error;
     }
   }
+
+  async sendWelcomeDoctorEmail(email: string, name: string): Promise<void> {
+    try {
+      const html = this.emailTemplateService.compileWelcomeDoctorTemplate({
+        name,
+        email,
+      });
+
+      await this.transporter.sendMail({
+        from: this.configService.get<string>('SMTP_FROM'),
+        to: email,
+        subject: 'Welcome to CuraKidney - Complete Your Account Setup',
+        text: `Welcome to CuraKidney, Dr. ${name}! Please complete your account setup.`,
+        html,
+      });
+
+      this.logger.log(`Welcome doctor email sent successfully to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send welcome doctor email to ${email}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
 }

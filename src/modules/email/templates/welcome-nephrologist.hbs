@@ -80,7 +80,7 @@
       <div class='content'>
         <h1>Welcome to CuraKidney</h1>
 
-        <p style='font-size: 14px; color: #666;'>Dear [Doctor Fullname],</p>
+        <p style='font-size: 14px; color: #666;'>Dear {{name}},</p>
 
         <p style='font-size: 14px; color: #666;'>Your account creation has been
           initiated by one of our facility staff.</p>
@@ -96,11 +96,14 @@
           <li>Once success, you will be then able to login to the platform</li>
         </ul>
 
+        {{! TODO: FIX REDIRECT NOT WORKING }}
         <a
-          href='https://curakidneydashboardv2.up.railway.app/auth/create-account/verify-details?account_type=nephrologist'
+          href='{{redirectUri}}'
           class='button'
-          style='font-size: 14px;'
-        >Verify Your Account Details</a>
+          style='font-size: 14px; display: inline-block; background-color: #d1243b; color: #ffffff !important; text-decoration: none; padding: 12px 25px; border-radius: 4px; margin: 20px 0; font-weight: bold;'
+        >
+          Verify Your Account Details
+        </a>
 
         <div class='divider'></div>
 

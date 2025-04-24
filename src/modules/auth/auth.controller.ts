@@ -5,6 +5,7 @@ import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
+import { SendWelcomeEmailDto } from './dto/send-welcome-email.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -58,5 +59,18 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid code' })
   verifyOtpCode(@Body() dto: VerifyOtpCodeDto) {
     return this.authService.verifyOtpCode(dto);
+  }
+
+  @Post('nephrologist/welcome-email')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Send welcome email to nephrologist' })
+  @ApiBody({ type: SendWelcomeEmailDto })
+  @ApiResponse({ status: 200, description: 'Welcome email sent successfully' })
+  @ApiResponse({
+    status: 401,
+    description: 'User not found or is not a nephrologist',
+  })
+  async sendWelcomeNephrologistEmail(@Body() dto: SendWelcomeEmailDto) {
+    return this.authService.sendWelcomeNephrologistEmail(dto.email);
   }
 }

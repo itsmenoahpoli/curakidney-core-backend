@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@/modules/users/users.service';
 import { EmailService } from '@/modules/email/email.service';
@@ -95,6 +99,28 @@ export class AuthService {
         email: user.email,
       },
     };
+  }
+
+  async sendWelcomeNephrologistEmail(email: string) {
+    const user = await this.prisma.user.findFirst({
+      where: {
+        email,
+        userRole: {
+          name: 'nephrologist',
+        },
+      },
+      include: {
+        userRole: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found or is not a nephrologist');
+    }
+
+    await this.emailService.sendWelcomeDoctorEmail(user.email, user.name);
+
+    return { message: 'Welcome email sent successfully' };
   }
 
   async refreshTokens(refreshToken: string) {
