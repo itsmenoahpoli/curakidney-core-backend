@@ -18,8 +18,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "seed": "ts-node prisma/seed.ts",
-    "routes": "ts-node -r tsconfig-paths/register src/utils/routes-explorer.ts"
+    "routes": "ts-node -r tsconfig-paths/register src/utils/routes-explorer.ts",
+    "db:seed": "ts-node prisma/seed.ts",
+    "db:reset": "npx prisma migrate reset --force && npx prisma migrate deploy && npx prisma generate && npm run db:seed"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
