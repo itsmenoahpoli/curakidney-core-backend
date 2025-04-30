@@ -95,4 +95,33 @@ export class EmailService {
       throw error;
     }
   }
+
+  async sendAccountCreatedNephrologistEmail(
+    email: string,
+    name: string,
+  ): Promise<void> {
+    try {
+      const html =
+        this.emailTemplateService.compileAccountCreatedNephrologistTemplate({
+          name,
+          loginUri: 'https://curakidneydashboardv2.up.railway.app/signin',
+        });
+
+      await this.transporter.sendMail({
+        from: this.configService.get<string>('SMTP_FROM'),
+        to: email,
+        subject: 'Welcome to CuraKidney - Account Created Successfully',
+        text: `Welcome to CuraKidney, Dr. ${name}! Your account has been created successfully.`,
+        html,
+      });
+
+      this.logger.log(`Account created email sent successfully to ${email}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send account created email to ${email}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
 }

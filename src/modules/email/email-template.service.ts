@@ -69,12 +69,31 @@ export class EmailTemplateService {
       const template = this.getTemplate('welcome-nephrologist');
       return template({
         ...data,
-        redirectUri: `https://curakidneydashboardv2.up.railway.app/auth/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
+        redirectUri: `https://curakidneydashboardv2.up.railway.app/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
         assetsUrl: this.configService.get('ASSETS_URL'),
       });
     } catch (error) {
       this.logger.error(
         `Failed to compile welcome doctor template: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
+
+  compileAccountCreatedNephrologistTemplate(data: {
+    name: string;
+    loginUri: string;
+  }): string {
+    try {
+      const template = this.getTemplate('account-created-nephrologist');
+      return template({
+        ...data,
+        assetsUrl: this.configService.get('ASSETS_URL'),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to compile account created nephrologist template: ${error.message}`,
         error.stack,
       );
       throw error;

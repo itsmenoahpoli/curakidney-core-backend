@@ -10,10 +10,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto | any) {
     const existingUser = await this.findByEmail(createUserDto.email);
     if (existingUser) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException('Email already associated with an account');
     }
 
     return this.prisma.user.create({

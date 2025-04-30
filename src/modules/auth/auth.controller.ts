@@ -6,6 +6,8 @@ import { RegisterDto } from './dto/register.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
 import { SendWelcomeEmailDto } from './dto/send-welcome-email.dto';
+import { VerifyDoctorDto } from './dto/verify-doctor.dto';
+import { RegisterNephrologistDto } from './dto/register-nephrologist.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -26,9 +28,27 @@ export class AuthController {
   @ApiOperation({ summary: 'User registration' })
   @ApiBody({ type: RegisterDto })
   @ApiResponse({ status: 201, description: 'User successfully registered' })
-  @ApiResponse({ status: 409, description: 'Email already exists' })
+  @ApiResponse({
+    status: 409,
+    description: 'Email already associated with an account',
+  })
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
+  }
+
+  @Post('nephrologist/register')
+  @ApiOperation({ summary: 'Register new nephrologist' })
+  @ApiBody({ type: RegisterNephrologistDto })
+  @ApiResponse({
+    status: 201,
+    description: 'Nephrologist successfully registered',
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'Email already associated with an account',
+  })
+  registerNephrologist(@Body() registerDto: RegisterNephrologistDto) {
+    return this.authService.registerNephrologist(registerDto);
   }
 
   @Post('refresh')
@@ -72,5 +92,18 @@ export class AuthController {
   })
   async sendWelcomeNephrologistEmail(@Body() dto: SendWelcomeEmailDto) {
     return this.authService.sendWelcomeNephrologistEmail(dto.email);
+  }
+
+  @Post('/nephrologist/verify-credentials')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Verify doctor credentials' })
+  @ApiBody({ type: VerifyDoctorDto })
+  @ApiResponse({
+    status: 200,
+    description: 'Doctor credentials verified successfully',
+  })
+  @ApiResponse({ status: 400, description: 'Invalid credentials' })
+  verifyDoctor(@Body() verifyDoctorDto: VerifyDoctorDto) {
+    return this.authService.verifyDoctor(verifyDoctorDto);
   }
 }

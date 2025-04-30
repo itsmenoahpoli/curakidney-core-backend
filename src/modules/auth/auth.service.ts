@@ -10,6 +10,8 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
+import { VerifyDoctorDto } from './dto/verify-doctor.dto';
+import { RegisterNephrologistDto } from './dto/register-nephrologist.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
 
@@ -101,24 +103,52 @@ export class AuthService {
     };
   }
 
-  async sendWelcomeNephrologistEmail(email: string) {
-    const user = await this.prisma.user.findFirst({
-      where: {
-        email,
-        userRole: {
-          name: 'nephrologist',
-        },
-      },
-      include: {
-        userRole: true,
-      },
+  async registerNephrologist(registerDto: RegisterNephrologistDto) {
+    const hashedPassword = await bcrypt.hash(registerDto.password, 10);
+
+    // Find nephrologist role
+    const nephrologistRole = await this.prisma.userRole.findUnique({
+      where: { name: 'nephrologist' },
     });
 
-    if (!user) {
-      throw new NotFoundException('User not found or is not a nephrologist');
+    if (!nephrologistRole) {
+      throw new NotFoundException('Nephrologist role not found');
     }
 
-    await this.emailService.sendWelcomeDoctorEmail(user.email, user.name);
+    const user = await this.usersService.create({
+      email: registerDto.email,
+      password: hashedPassword,
+      name: registerDto.name,
+      userRoleId: nephrologistRole.id,
+      tinNumber: registerDto.tinNumber,
+      prcLicense: registerDto.prcLicenseNumber,
+    });
+
+    const payload = { sub: user.id, email: user.email };
+    const tokens = this.generateTokens(payload);
+
+    // Send account created email
+    await this.emailService.sendAccountCreatedNephrologistEmail(
+      user.email,
+      user.name,
+    );
+
+    return {
+      ...tokens,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: {
+          id: nephrologistRole.id,
+          name: nephrologistRole.name,
+        },
+      },
+    };
+  }
+
+  async sendWelcomeNephrologistEmail(email: string) {
+    await this.emailService.sendWelcomeDoctorEmail(email, 'Doctor');
 
     return { message: 'Welcome email sent successfully' };
   }
@@ -195,5 +225,21 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email };
     return this.generateTokens(payload);
+  }
+
+  async verifyDoctor(verifyDoctorDto: VerifyDoctorDto) {
+    const { last_name, tin_number, prc_license_number } = verifyDoctorDto;
+
+    if (
+      last_name.toLowerCase() === 'policarpio' &&
+      tin_number === '123456' &&
+      prc_license_number === '123456'
+    ) {
+      return {
+        is_verified: true,
+      };
+    }
+
+    return { is_verified: false };
   }
 }

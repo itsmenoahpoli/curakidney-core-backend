@@ -23,15 +23,20 @@ model UserRole {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  email      String    @unique
-  password   String
-  name       String
-  userRole   UserRole  @relation(fields: [userRoleId], references: [id])
-  userRoleId Int
-  otpCodes   OtpCode[]
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  id                      Int       @id @default(autoincrement())
+  email                   String    @unique
+  password                String
+  name                    String
+  tinNumber               String?
+  prcLicense              String?
+  ptrNumber               String?
+  phicAccreditationNumber String?
+  s2LicenseNumber         String?
+  userRole                UserRole  @relation(fields: [userRoleId], references: [id])
+  userRoleId              Int
+  otpCodes                OtpCode[]
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
 }
 
 model OtpCode {
