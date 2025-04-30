@@ -124,4 +124,39 @@ export class EmailService {
       throw error;
     }
   }
+
+  async sendPaymentStatusUpdateEmail(
+    email: string,
+    doctorName: string,
+    treatmentIds: string[],
+    amount: number,
+  ): Promise<void> {
+    try {
+      const html = this.emailTemplateService.compileTemplate(
+        'treatments-paymentstatus-update',
+        {
+          name: doctorName,
+          treatmentIds,
+          amount,
+        },
+      );
+
+      await this.transporter.sendMail({
+        from: this.configService.get<string>('SMTP_FROM'),
+        to: email,
+        subject: 'Treatment Payment Status Update',
+        html,
+      });
+
+      this.logger.log(
+        `Payment status update email sent successfully to ${email}`,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to send payment status update email to ${email}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
 }

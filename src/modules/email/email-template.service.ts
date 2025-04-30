@@ -99,4 +99,20 @@ export class EmailTemplateService {
       throw error;
     }
   }
+
+  compileTemplate(name: string, data: Record<string, any>): string {
+    try {
+      const template = this.getTemplate(name);
+      return template({
+        ...data,
+        assetsUrl: this.configService.get('ASSETS_URL'),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to compile template ${name}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
+  }
 }
