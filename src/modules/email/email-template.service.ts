@@ -69,7 +69,7 @@ export class EmailTemplateService {
       const template = this.getTemplate('welcome-nephrologist');
       return template({
         ...data,
-        redirectUri: `https://curakidneydashboardv2.up.railway.app/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
+        redirectUri: `https://curakidney-core-dashboard-production.up.railway.app/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
         assetsUrl: this.configService.get('ASSETS_URL'),
       });
     } catch (error) {
