@@ -8,7 +8,7 @@ import {
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { PatientTreatmentsService } from './patient-treatments.service';
 import { PatientTreatment } from './entities/patient-treatment.entity';
-import { EmailService } from '../email/email.service';
+import { EmailService } from '@/modules/email/email.service';
 
 @ApiTags('patient-treatments')
 @ApiBearerAuth('bearer')

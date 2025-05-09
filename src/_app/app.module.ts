@@ -9,6 +9,7 @@ import { PrismaModule } from '@/prisma/prisma.module';
 import { PatientsModule } from '@/modules/patients/patients.module';
 import { PatientTreatmentsModule } from '@/modules/patient-treatments/patient-treatments.module';
 import { DoctorsModule } from '@/modules/doctors/doctors.module';
+import { MedipadModule } from '@/modules/external-data/medipad/medipad.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { DoctorsModule } from '@/modules/doctors/doctors.module';
     PatientsModule,
     PatientTreatmentsModule,
     DoctorsModule,
+    MedipadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

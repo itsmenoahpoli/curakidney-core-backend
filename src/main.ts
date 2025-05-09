@@ -23,11 +23,13 @@ async function bootstrap() {
         bearerFormat: 'JWT',
         in: 'header',
       },
-      'bearer', // This is the key we'll use in @ApiBearerAuth()
+      'bearer',
     )
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    customSiteTitle: 'CuraKidney API',
+  });
 
   const port = configService.get('PORT');
   await app.listen(port);
