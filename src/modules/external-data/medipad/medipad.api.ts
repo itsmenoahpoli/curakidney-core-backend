@@ -5,16 +5,13 @@ import { ConfigService } from '@nestjs/config';
 import {
   Injectable,
   HttpException,
+  HttpStatus,
   UnauthorizedException,
   MethodNotAllowedException,
   InternalServerErrorException,
 } from '@nestjs/common';
 import { MedipadHttpRequestArgs } from './entities/medipad.entity';
-
-const DEFAULT_HEADERS = {
-  'Content-Type': 'application/json',
-  Accept: 'application/json',
-};
+import { DEFAULT_HEADERS } from './medipad.defaults';
 
 @Injectable()
 export class MedipadHttpClient {
@@ -26,6 +23,7 @@ export class MedipadHttpClient {
   async httpInstance(args: MedipadHttpRequestArgs) {
     try {
       const {
+        authenticationKey,
         endpoint,
         method,
         data = undefined,
@@ -43,22 +41,26 @@ export class MedipadHttpClient {
         method,
         data,
         params,
-        headers,
+        headers: {
+          ...headers,
+          ...(authenticationKey && { 'auth-key': authenticationKey }),
+        },
       });
 
       const response = await firstValueFrom(rxResponse);
       return response.data;
     } catch (error) {
+      console.log(error);
       if (error instanceof AxiosError && error.response) {
         const status = error.response.status;
         const message = error.response.data?.message || error.message;
 
         switch (status) {
-          case 401:
+          case HttpStatus.UNAUTHORIZED:
             throw new UnauthorizedException(message);
-          case 405:
+          case HttpStatus.METHOD_NOT_ALLOWED:
             throw new MethodNotAllowedException(message);
-          case 500:
+          case HttpStatus.INTERNAL_SERVER_ERROR:
             throw new InternalServerErrorException(message);
           default:
             throw new HttpException(message, status);
