@@ -1,6 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { Doctor } from './entities/doctor.entity';
 import { MedipadService } from '../external-data/medipad/medipad.service';
+import { VerifyDoctorDto } from './dto/verify-doctor.dto';
 
 @Injectable()
 export class DoctorsService {
@@ -19,6 +20,19 @@ export class DoctorsService {
 
     if (!doctor) {
       throw new NotFoundException('Doctor not found');
+    }
+
+    return doctor;
+  }
+
+  async verifyDoctor(verifyDoctorDto: VerifyDoctorDto): Promise<Doctor> {
+    const doctor = await this.findOne(verifyDoctorDto.PRCNumber);
+
+    const doctorLastName = doctor.PhysicianName.split(' ').pop()?.toUpperCase();
+    const providedLastName = verifyDoctorDto.lastName.toUpperCase();
+
+    if (doctorLastName !== providedLastName || doctor.TIN !== verifyDoctorDto.TIN) {
+      throw new BadRequestException('Doctor verification failed');
     }
 
     return doctor;
