@@ -1,10 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DoctorsService } from './doctors.service';
 import { Doctor } from './entities/doctor.entity';
@@ -28,14 +23,14 @@ export class DoctorsController {
     return this.doctorsService.findAll();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Get a doctor by id' })
+  @Get(':PRCNumber')
+  @ApiOperation({ summary: 'Get a doctor by PRC number' })
   @ApiResponse({
     status: 200,
-    description: 'Return a doctor by id',
+    description: 'Return a doctor by PRC number',
     type: Doctor,
   })
-  async findOne(@Param('id') id: string): Promise<Doctor> {
-    return this.doctorsService.findOne(+id);
+  async findOne(@Param('PRCNumber') PRCNumber: string): Promise<Doctor> {
+    return this.doctorsService.findOne(PRCNumber);
   }
 }

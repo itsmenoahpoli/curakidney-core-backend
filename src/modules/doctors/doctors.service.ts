@@ -1,27 +1,21 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Doctor } from './entities/doctor.entity';
+import { MedipadService } from '../external-data/medipad/medipad.service';
 
 @Injectable()
 export class DoctorsService {
-  private readonly mockDoctors: Doctor[] = [
-    {
-      id: 1,
-      name: 'Dr. Patrick Policarpio',
-      email: 'patrickpolicarpio08@gmail.com',
-    },
-    {
-      id: 2,
-      name: 'Dr. Anurag Verma',
-      email: 'anurag.verma@curakidney.com',
-    },
-  ];
+  constructor(private readonly medipadService: MedipadService) {}
 
   async findAll(): Promise<Doctor[]> {
-    return this.mockDoctors;
+    const medipadDoctors = await this.medipadService.getDoctorsMasterList();
+    return medipadDoctors.map((doctor) => ({
+      ...doctor,
+    }));
   }
 
-  async findOne(id: number): Promise<Doctor> {
-    const doctor = this.mockDoctors.find((d) => d.id === id);
+  async findOne(PRCNumber: string): Promise<Doctor> {
+    const doctors = await this.findAll();
+    const doctor = doctors.find((d) => d.PRCNumber === PRCNumber);
 
     if (!doctor) {
       throw new NotFoundException('Doctor not found');

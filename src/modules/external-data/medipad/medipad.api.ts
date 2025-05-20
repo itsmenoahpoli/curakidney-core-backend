@@ -50,7 +50,7 @@ export class MedipadHttpClient {
       const response = await firstValueFrom(rxResponse);
       return response.data;
     } catch (error) {
-      console.log(error);
+      console.log('[MEDIPAD API ERROR] -', error);
       if (error instanceof AxiosError && error.response) {
         const status = error.response.status;
         const message = error.response.data?.message || error.message;

@@ -5,6 +5,6 @@ export const DEFAULT_HEADERS = {
 
 export const DEFAULT_PAGINATION = {
   PageIndex: 0,
-  PageTotalRecords: 20,
+  PageTotalRecords: 500,
   SortType: 'asc',
 };
