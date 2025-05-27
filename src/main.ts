@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { SwaggerModule, SwaggerCustomOptions, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from '@/_app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 
@@ -29,7 +29,8 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
     customSiteTitle: 'CuraKidney API',
-  });
+    persistAuthorization: true,
+  } as SwaggerCustomOptions);
 
   const port = configService.get('PORT');
   await app.listen(port);

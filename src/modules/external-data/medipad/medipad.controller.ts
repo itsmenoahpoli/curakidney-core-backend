@@ -30,6 +30,20 @@ export class MedipadController {
     return this.medipadService.getAuthenticationKey();
   }
 
+  @Post('/get-patients-master-list')
+  @ApiOperation({ summary: 'Get medipad patient master list' })
+  @ApiResponse({
+    status: 200,
+    description: 'Return medipad patients master list',
+    type: MedipadPatient,
+    isArray: true,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthenticated' })
+  @ApiResponse({ status: 500, description: 'Internal server error' })
+  getPatientsMasterList(): Promise<MedipadPatient[]> {
+    return this.medipadService.getPatientsMasterList();
+  }
+
   @Post('/get-patients-master-list/:prcNumber')
   @ApiOperation({ summary: 'Get medipad patient master list' })
   @ApiResponse({
@@ -40,7 +54,9 @@ export class MedipadController {
   })
   @ApiResponse({ status: 401, description: 'Unauthenticated' })
   @ApiResponse({ status: 500, description: 'Internal server error' })
-  getPatientsMasterList(@Param('prcNumber') prcNumber: string): Promise<MedipadPatient[]> {
+  getPatientsMasterListWithPrcNumber(
+    @Param('prcNumber') prcNumber: string,
+  ): Promise<MedipadPatient[]> {
     return this.medipadService.getPatientsMasterList(prcNumber);
   }
 

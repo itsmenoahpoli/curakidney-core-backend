@@ -41,7 +41,7 @@ export class MedipadService {
     return result.then((data) => data);
   }
 
-  async getPatientsMasterList(prcNumber: string): Promise<MedipadPatient[]> {
+  async getPatientsMasterList(prcNumber?: string): Promise<MedipadPatient[]> {
     const { authenticationkey } = await this.getAuthenticationKey();
     const result = this.httpRequest({
       authenticationKey: authenticationkey,
@@ -49,7 +49,7 @@ export class MedipadService {
       method: 'POST',
       data: {
         ...DEFAULT_PAGINATION,
-        PRCNumber: prcNumber,
+        PRCNumber: prcNumber ?? '',
         PatientName: '',
         SortField: 'patientname',
       },
