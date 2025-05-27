@@ -5,8 +5,12 @@ import { ConfigService } from '@nestjs/config';
 export class AppService {
   constructor(private configService: ConfigService) {}
 
-  getHello(): string {
+  healthcheck() {
     const nodeEnv = this.configService.get<string>('NODE_ENV');
-    return `Hello World! Running in ${nodeEnv} mode`;
+
+    return {
+      is_online: true,
+      environment: nodeEnv,
+    };
   }
 }
