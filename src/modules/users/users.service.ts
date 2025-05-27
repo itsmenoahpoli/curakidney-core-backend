@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  ConflictException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 
@@ -43,5 +39,17 @@ export class UsersService {
     }
 
     return defaultRole;
+  }
+
+  async findNephrologistRole() {
+    const nephrologistRole = await this.prisma.userRole.findUnique({
+      where: { name: 'nephrologist' },
+    });
+
+    if (!nephrologistRole) {
+      throw new NotFoundException('Nephrologist role not found');
+    }
+
+    return nephrologistRole;
   }
 }

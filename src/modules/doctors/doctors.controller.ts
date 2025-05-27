@@ -1,9 +1,8 @@
-import { Controller, Get, Param, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { DoctorsService } from './doctors.service';
 import { Doctor } from './entities/doctor.entity';
-import { VerifyDoctorDto } from './dto/verify-doctor.dto';
 
 @ApiTags('doctors')
 @ApiBearerAuth('bearer')
@@ -33,20 +32,5 @@ export class DoctorsController {
   })
   async findOne(@Param('prcNumber') prcNumber: string): Promise<Doctor> {
     return this.doctorsService.findOne(prcNumber);
-  }
-
-  @Post('verify')
-  @ApiOperation({ summary: 'Verify doctor details' })
-  @ApiResponse({
-    status: 200,
-    description: 'Doctor verification successful',
-    type: Doctor,
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Doctor verification failed',
-  })
-  async verifyDoctor(@Body() verifyDoctorDto: VerifyDoctorDto): Promise<Doctor> {
-    return this.doctorsService.verifyDoctor(verifyDoctorDto);
   }
 }

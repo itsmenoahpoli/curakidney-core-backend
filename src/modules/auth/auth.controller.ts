@@ -8,11 +8,15 @@ import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
 import { SendWelcomeEmailDto } from './dto/send-welcome-email.dto';
 import { VerifyDoctorDto } from './dto/verify-doctor.dto';
 import { RegisterNephrologistDto } from './dto/register-nephrologist.dto';
+import { DoctorsService } from '../doctors/doctors.service';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly doctorsService: DoctorsService,
+  ) {}
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -104,6 +108,10 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Invalid credentials' })
   verifyDoctor(@Body() verifyDoctorDto: VerifyDoctorDto) {
-    return this.authService.verifyDoctor(verifyDoctorDto);
+    return this.doctorsService.verifyDoctor({
+      lastName: verifyDoctorDto.last_name,
+      PRCNumber: verifyDoctorDto.prc_license_number,
+      TIN: verifyDoctorDto.tin_number,
+    });
   }
 }

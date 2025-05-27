@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '@/modules/users/users.service';
 import { EmailService } from '@/modules/email/email.service';
@@ -10,7 +6,6 @@ import { PrismaService } from '@/prisma/prisma.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RequestOtpCodeDto, VerifyOtpCodeDto } from './dto/otp.dto';
-import { VerifyDoctorDto } from './dto/verify-doctor.dto';
 import { RegisterNephrologistDto } from './dto/register-nephrologist.dto';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
@@ -48,15 +43,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
+    const isPasswordValid = await bcrypt.compare(loginDto.password, user.password);
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Fetch user with role information
     const userWithRole = await this.prisma.user.findUnique({
       where: { id: user.id },
       include: {
@@ -105,44 +96,22 @@ export class AuthService {
 
   async registerNephrologist(registerDto: RegisterNephrologistDto) {
     const hashedPassword = await bcrypt.hash(registerDto.password, 10);
-
-    // Find nephrologist role
-    const nephrologistRole = await this.prisma.userRole.findUnique({
-      where: { name: 'nephrologist' },
-    });
-
-    if (!nephrologistRole) {
-      throw new NotFoundException('Nephrologist role not found');
-    }
+    const nephrologistRole = await this.usersService.findNephrologistRole();
 
     const user = await this.usersService.create({
-      email: registerDto.email,
+      ...registerDto,
       password: hashedPassword,
-      name: registerDto.name,
       userRoleId: nephrologistRole.id,
-      tinNumber: registerDto.tinNumber,
-      prcLicense: registerDto.prcLicenseNumber,
     });
 
     const payload = { sub: user.id, email: user.email };
     const tokens = this.generateTokens(payload);
-
-    // Send account created email
-    await this.emailService.sendAccountCreatedNephrologistEmail(
-      user.email,
-      user.name,
-    );
 
     return {
       ...tokens,
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
-        role: {
-          id: nephrologistRole.id,
-          name: nephrologistRole.name,
-        },
       },
     };
   }
@@ -225,21 +194,5 @@ export class AuthService {
 
     const payload = { sub: user.id, email: user.email };
     return this.generateTokens(payload);
-  }
-
-  async verifyDoctor(verifyDoctorDto: VerifyDoctorDto) {
-    const { last_name, tin_number, prc_license_number } = verifyDoctorDto;
-
-    if (
-      last_name.toLowerCase() === 'policarpio' &&
-      tin_number === '123456' &&
-      prc_license_number === '123456'
-    ) {
-      return {
-        is_verified: true,
-      };
-    }
-
-    return { is_verified: false };
   }
 }

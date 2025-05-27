@@ -72,7 +72,7 @@ export class MedipadService {
     return result.then((data) => this.decryptPayload(data.result));
   }
 
-  async getPatientTreatmentOverview(prcNumber: string) {
+  async getPatientTreatmentOverview(prcNumber: string, month: number, year: number) {
     const { authenticationkey } = await this.getAuthenticationKey();
     const result = this.httpRequest({
       authenticationKey: authenticationkey,
@@ -80,8 +80,108 @@ export class MedipadService {
       method: 'POST',
       data: {
         PRCNumber: prcNumber,
-        Month: 0,
-        Year: new Date().getFullYear(),
+        Month: month,
+        Year: year,
+      },
+    });
+
+    return result.then((data) => this.decryptPayload(data.result));
+  }
+
+  async getPatientTreatmentOverviewAllMonths(prcNumber: string, year: number) {
+    const months = Array.from({ length: 12 }, (_, i) => i);
+    const results = await Promise.all(
+      months.map((month) => this.getPatientTreatmentOverview(prcNumber, month, year)),
+    );
+    return results.flat();
+  }
+
+  async getPatientTreatments(
+    prcNumber: string,
+    month: number,
+    year: number,
+    pageIndex: number = 0,
+    pageTotalRecords: number = 10,
+    sortField: 'patientname' | 'lasttreatmentdate' | 'nooftreatments' = 'patientname',
+    sortType: 'asc' | 'desc' = 'asc',
+  ) {
+    const { authenticationkey } = await this.getAuthenticationKey();
+    const result = this.httpRequest({
+      authenticationKey: authenticationkey,
+      endpoint: '/GetPatientTreatmentsAPI',
+      method: 'POST',
+      data: {
+        PRCNumber: prcNumber,
+        Month: month,
+        Year: year,
+        PageIndex: pageIndex,
+        PageTotalRecords: pageTotalRecords,
+        SortField: sortField,
+        SortType: sortType,
+      },
+    });
+
+    return result.then((data) => this.decryptPayload(data.result));
+  }
+
+  async getTreatments(
+    prcNumber: string,
+    month: number,
+    year: number,
+    pageIndex: number = 0,
+    pageTotalRecords: number = 10,
+    sortField: 'patientname' | 'lasttreatmentdate' | 'nooftreatments' = 'patientname',
+    sortType: 'asc' | 'desc' = 'asc',
+  ) {
+    const { authenticationkey } = await this.getAuthenticationKey();
+    const result = this.httpRequest({
+      authenticationKey: authenticationkey,
+      endpoint: '/GetTreatmentsAPI',
+      method: 'POST',
+      data: {
+        PRCNumber: prcNumber,
+        Month: month,
+        Year: year,
+        PageIndex: pageIndex,
+        PageTotalRecords: pageTotalRecords,
+        SortField: sortField,
+        SortType: sortType,
+      },
+    });
+
+    return result.then((data) => this.decryptPayload(data.result));
+  }
+
+  async getTreatmentLink(prcNumber: string, treatmentOrderId: number, patientId: number) {
+    const { authenticationkey } = await this.getAuthenticationKey();
+    const result = this.httpRequest({
+      authenticationKey: authenticationkey,
+      endpoint: '/GetTreatmentLinkAPI',
+      method: 'POST',
+      data: {
+        PRCNumber: prcNumber,
+        TreatmentOrderID: treatmentOrderId,
+        PatientID: patientId,
+      },
+    });
+
+    return result.then((data) => this.decryptPayload(data.result));
+  }
+
+  async getPatientHealthDetails(
+    prcNumber: string,
+    patientId: string,
+    conversion: 'CO' | 'SI' = 'CO',
+  ) {
+    const { authenticationkey } = await this.getAuthenticationKey();
+    const result = this.httpRequest({
+      authenticationKey: authenticationkey,
+      endpoint: '/GePatientHealthDetailsAPI',
+      method: 'POST',
+      data: {
+        PRCNumber: prcNumber,
+        PatientID: patientId,
+        Conversion: conversion,
       },
     });
 
