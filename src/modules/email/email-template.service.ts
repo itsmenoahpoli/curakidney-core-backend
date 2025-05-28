@@ -88,7 +88,7 @@ export class EmailTemplateService {
   ): string {
     const templateData = {
       ...data,
-      redirectUri: `${this.configService.get('DASHBOARD_URL')}/auth/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
+      redirectUri: `${this.configService.get('DASHBOARD_URL')}/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
     };
     return this.compileTemplateWithData<WelcomeDoctorTemplateData>(
       'welcome-nephrologist',

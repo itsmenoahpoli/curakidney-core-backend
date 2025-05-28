@@ -41,10 +41,7 @@ export class EmailService {
 
       this.logger.log(`OTP email sent successfully to ${email}`);
     } catch (error) {
-      this.logger.error(
-        `Failed to send OTP email to ${email}: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to send OTP email to ${email}: ${error.message}`, error.stack);
       throw error;
     }
   }
@@ -63,10 +60,7 @@ export class EmailService {
 
       this.logger.log(`Welcome email sent successfully to ${email}`);
     } catch (error) {
-      this.logger.error(
-        `Failed to send welcome email to ${email}: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to send welcome email to ${email}: ${error.message}`, error.stack);
       throw error;
     }
   }
@@ -96,16 +90,12 @@ export class EmailService {
     }
   }
 
-  async sendAccountCreatedNephrologistEmail(
-    email: string,
-    name: string,
-  ): Promise<void> {
+  async sendAccountCreatedNephrologistEmail(email: string, name: string): Promise<void> {
     try {
-      const html =
-        this.emailTemplateService.compileAccountCreatedNephrologistTemplate({
-          name,
-          loginUri: 'https://curakidneydashboardv2.up.railway.app/signin',
-        });
+      const html = this.emailTemplateService.compileAccountCreatedNephrologistTemplate({
+        name,
+        loginUri: `${this.configService.get('DASHBOARD_URL')}/signin`,
+      });
 
       await this.transporter.sendMail({
         from: this.configService.get<string>('SMTP_FROM'),
@@ -132,14 +122,11 @@ export class EmailService {
     amount: number,
   ): Promise<void> {
     try {
-      const html = this.emailTemplateService.compileTemplate(
-        'treatments-paymentstatus-update',
-        {
-          name: doctorName,
-          treatmentIds,
-          amount,
-        },
-      );
+      const html = this.emailTemplateService.compileTemplate('treatments-paymentstatus-update', {
+        name: doctorName,
+        treatmentIds,
+        amount,
+      });
 
       await this.transporter.sendMail({
         from: this.configService.get<string>('SMTP_FROM'),
@@ -148,9 +135,7 @@ export class EmailService {
         html,
       });
 
-      this.logger.log(
-        `Payment status update email sent successfully to ${email}`,
-      );
+      this.logger.log(`Payment status update email sent successfully to ${email}`);
     } catch (error) {
       this.logger.error(
         `Failed to send payment status update email to ${email}: ${error.message}`,
