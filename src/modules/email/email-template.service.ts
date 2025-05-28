@@ -4,16 +4,44 @@ import { join } from 'path';
 import * as handlebars from 'handlebars';
 import { ConfigService } from '@nestjs/config';
 
+interface BaseTemplateData {
+  assetsUrl: string;
+}
+
+interface OtpTemplateData extends BaseTemplateData {
+  code: string;
+}
+
+interface WelcomeTemplateData extends BaseTemplateData {
+  name: string;
+}
+
+interface WelcomeDoctorTemplateData extends BaseTemplateData {
+  name: string;
+  email: string;
+  redirectUri: string;
+}
+
+interface AccountCreatedNephrologistTemplateData extends BaseTemplateData {
+  name: string;
+  loginUri: string;
+}
+
 @Injectable()
 export class EmailTemplateService {
   private readonly templatesDir: string;
   private readonly logger = new Logger(EmailTemplateService.name);
+  private readonly templateCache: Map<string, HandlebarsTemplateDelegate> = new Map();
 
   constructor(private configService: ConfigService) {
     this.templatesDir = join(__dirname, 'templates');
   }
 
   private getTemplate(name: string): HandlebarsTemplateDelegate {
+    if (this.templateCache.has(name)) {
+      return this.templateCache.get(name);
+    }
+
     try {
       const templatePath = join(this.templatesDir, `${name}.hbs`);
       this.logger.debug(`Loading email template: ${templatePath}`);
@@ -21,86 +49,20 @@ export class EmailTemplateService {
       const templateContent = readFileSync(templatePath, 'utf-8');
       const template = handlebars.compile(templateContent);
 
+      this.templateCache.set(name, template);
       this.logger.debug(`Successfully compiled template: ${name}`);
+
       return template;
     } catch (error) {
-      this.logger.error(
-        `Failed to load template ${name}: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to load template ${name}: ${error.message}`, error.stack);
       throw new Error(`Template ${name} not found: ${error.message}`);
     }
   }
 
-  compileOtpTemplate(data: { code: string }): string {
-    try {
-      const template = this.getTemplate('otp-code');
-      return template({
-        ...data,
-        assetsUrl: this.configService.get('ASSETS_URL'),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to compile OTP template: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
-  }
-
-  compileWelcomeTemplate(data: { name: string }): string {
-    try {
-      const template = this.getTemplate('welcome');
-      return template({
-        ...data,
-        assetsUrl: this.configService.get('ASSETS_URL'),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to compile welcome template: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
-  }
-
-  compileWelcomeDoctorTemplate(data: { name: string; email: string }): string {
-    try {
-      const template = this.getTemplate('welcome-nephrologist');
-      return template({
-        ...data,
-        redirectUri: `https://curakidney-core-dashboard-production.up.railway.app/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
-        assetsUrl: this.configService.get('ASSETS_URL'),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to compile welcome doctor template: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
-  }
-
-  compileAccountCreatedNephrologistTemplate(data: {
-    name: string;
-    loginUri: string;
-  }): string {
-    try {
-      const template = this.getTemplate('account-created-nephrologist');
-      return template({
-        ...data,
-        assetsUrl: this.configService.get('ASSETS_URL'),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to compile account created nephrologist template: ${error.message}`,
-        error.stack,
-      );
-      throw error;
-    }
-  }
-
-  compileTemplate(name: string, data: Record<string, any>): string {
+  private compileTemplateWithData<T extends BaseTemplateData>(
+    name: string,
+    data: Omit<T, 'assetsUrl'>,
+  ): string {
     try {
       const template = this.getTemplate(name);
       return template({
@@ -108,11 +70,42 @@ export class EmailTemplateService {
         assetsUrl: this.configService.get('ASSETS_URL'),
       });
     } catch (error) {
-      this.logger.error(
-        `Failed to compile template ${name}: ${error.message}`,
-        error.stack,
-      );
+      this.logger.error(`Failed to compile template ${name}: ${error.message}`, error.stack);
       throw error;
     }
+  }
+
+  compileOtpTemplate(data: Omit<OtpTemplateData, 'assetsUrl'>): string {
+    return this.compileTemplateWithData<OtpTemplateData>('otp-code', data);
+  }
+
+  compileWelcomeTemplate(data: Omit<WelcomeTemplateData, 'assetsUrl'>): string {
+    return this.compileTemplateWithData<WelcomeTemplateData>('welcome', data);
+  }
+
+  compileWelcomeDoctorTemplate(
+    data: Omit<WelcomeDoctorTemplateData, 'assetsUrl' | 'redirectUri'>,
+  ): string {
+    const templateData = {
+      ...data,
+      redirectUri: `${this.configService.get('DASHBOARD_URL')}/auth/create-account/verify-details?account_type=nephrologist&email=${data.email}`,
+    };
+    return this.compileTemplateWithData<WelcomeDoctorTemplateData>(
+      'welcome-nephrologist',
+      templateData,
+    );
+  }
+
+  compileAccountCreatedNephrologistTemplate(
+    data: Omit<AccountCreatedNephrologistTemplateData, 'assetsUrl'>,
+  ): string {
+    return this.compileTemplateWithData<AccountCreatedNephrologistTemplateData>(
+      'account-created-nephrologist',
+      data,
+    );
+  }
+
+  compileTemplate(name: string, data: Record<string, any>): string {
+    return this.compileTemplateWithData(name, data);
   }
 }
